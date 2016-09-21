@@ -25,7 +25,7 @@ public class DropDown<T> extends EditText implements View.OnClickListener {
     private T mSelectedItem;
     private PopupWindow popupWindow;
     private ListView mListView;
-    int popupHeight = 500;
+    private int popupHeight = 500;
     private int backgroundColor = Color.WHITE;
 
     public interface ItemClickListener<T> {
@@ -42,6 +42,11 @@ public class DropDown<T> extends EditText implements View.OnClickListener {
     public DropDown(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
+    }
+
+
+    public void setItemClickListener(ItemClickListener<T> itemClickListener) {
+        mItemClickListener = itemClickListener;
     }
 
     private void init(AttributeSet attrs) {
