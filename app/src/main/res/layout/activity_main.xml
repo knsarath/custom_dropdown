@@ -12,14 +12,142 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="dropdown.spinner.com.dropdownlist.MainActivity">
 
-    <dropdown.spinner.com.dropdownlist.DropDown
-        android:id="@+id/drop_down"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Click"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+
+            <dropdown.spinner.com.dropdownlist.DropDown
+                android:id="@+id/drop_down"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+
 </LinearLayout>
