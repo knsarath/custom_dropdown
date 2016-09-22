@@ -2,7 +2,6 @@ package dropdown.spinner.com.dropdownlist;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +14,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button = (Button) findViewById(R.id.btn);
+
         final DropDown<Bank> dropDown = (DropDown) findViewById(R.id.drop_down);
+        final DropDown<String> stringDropDown = (DropDown) findViewById(R.id.string_list);
+        stringDropDown.setItems(getItems());
         dropDown.setItems(getBanks());
         dropDown.setWhatToPrint(new DropDown.Printable<Bank>() {
             @Override
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                 return bank.getName();
             }
         });
-          dropDown.setItemClickListener(new DropDown.ItemClickListener<Bank>() {
+        dropDown.setItemClickListener(new DropDown.ItemClickListener<Bank>() {
             @Override
             public void onItemSelected(DropDown dropDown, Bank selectedItem) {
 

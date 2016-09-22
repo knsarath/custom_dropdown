@@ -2,6 +2,7 @@
 <LinearLayout
     android:id="@+id/activity_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:spinner="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,37 +19,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <Button
-                android:id="@+id/btn"
-                android:layout_width="wrap_content"
+            <include layout="@layout/buttons"/>
+            <dropdown.spinner.com.dropdownlist.DropDown
+                android:id="@+id/string_list"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-
+                spinner:firstItemSelected="true"
+                spinner:hintText="Select a string"
+            />
             <Button
 
                 android:layout_width="wrap_content"

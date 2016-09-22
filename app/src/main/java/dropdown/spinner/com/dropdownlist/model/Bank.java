@@ -13,8 +13,10 @@ public class Bank {
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return mName;
+    }
 
     public String getName() {
         return mName;

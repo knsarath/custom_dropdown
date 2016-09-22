@@ -3,8 +3,11 @@ package dropdown.spinner.com.dropdownlist;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +52,10 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private Drawable arrowDrawable;
     private int mSelectedIndex = -1;
     private ArrayAdapter<T> adapter;
-    private Printable<T> mWhatToPrint;
+    private Printable<T> mWhatToPrint = null;
+    private boolean mFirstItemSelected = false;
+    private Rect mRect;
+    private Paint mPaint;
 
 
     public interface ItemClickListener<T> {
@@ -82,23 +88,66 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
     private void init(AttributeSet attrs) {
+
+        mRect = new Rect();
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(2);
+        mPaint.setAlpha(200);
+        mPaint.setColor(0xFF848484);// line color
+
+
+        if (attrs != null) {
+            try {
+                TypedArray styledAttrs = getContext().obtainStyledAttributes(attrs, R.styleable.DropDownAttrs);
+                final String hint = styledAttrs.getString(R.styleable.DropDownAttrs_hintText);
+                mHintText = (hint == null) ? mHintText : hint;
+                mFirstItemSelected = styledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
+
+
+                styledAttrs.recycle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         setText(mHintText);
         setStyle(attrs);
         computePopupHeight();
-
         arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
         setCompoundDrawables(null, null, arrowDrawable, null);
         setKeyListener(null);
         setOnClickListener(this);
+        mDropdownContainer = new LinearLayout(getContext());
+        mDropdownContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
         setDropDownHeader();
-
         if (!mHideArrow) {
             arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
             arrowDrawable.setColorFilter(mArrowColor, PorterDuff.Mode.SRC_IN);
             setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
         }
+        setupListView();
+        mDropdownContainer.addView(mDropdownHeader);
+        mDropdownContainer.addView(mListView);
+        setupPopupWindow();
+    }
 
+    private void setupPopupWindow() {
+        popupWindow = new PopupWindow(getContext());
+        popupWindow.setContentView(mDropdownContainer);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.setElevation(16);
+        }
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
+        if (backgroundColor != Color.WHITE) { // default color is white
+            setBackgroundColor(backgroundColor);
+        }
+    }
 
+    private void setupListView() {
         mListView = new ListView(getContext());
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,35 +162,11 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 collapse();
             }
         });
-
-
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mListView.setLayoutParams(params);
-        mDropdownContainer.addView(mDropdownHeader);
-        mDropdownContainer.addView(mListView);
-        popupWindow = new PopupWindow(getContext());
-        popupWindow.setContentView(mDropdownContainer);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setFocusable(true);
-        popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.setElevation(16);
-            popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
-        } else {
-            popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
-        }
-
-        if (backgroundColor != Color.WHITE) { // default color is white
-            setBackgroundColor(backgroundColor);
-        }
-
     }
 
     private void setDropDownHeader() {
-        mDropdownContainer = new LinearLayout(getContext());
-        mDropdownContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
         mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item_1, null);
         if (!mHideArrow) {
             ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
@@ -165,13 +190,6 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     }
 
-    private void animateArrow(boolean shouldRotateUp) {
-        int start = shouldRotateUp ? 10000 : 0;
-        int end = shouldRotateUp ? 0 : 10000;
-        ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", start, end);
-        animator.start();
-    }
-
     private void setStyle(AttributeSet attrs) {
         int[] attrsArray = new int[]{android.R.attr.textAppearanceListItemSmall,
                 android.R.attr.listPreferredItemHeightSmall,
@@ -193,6 +211,10 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         ta.recycle();
     }
 
+    /**
+     * @param what 0 for height , 1 for width
+     * @return
+     */
     private int getScreenDimension(int what) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
@@ -202,23 +224,27 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     private void collapse() {
         popupWindow.dismiss();
-
-
     }
 
     public void setItems(List<T> items) {
         mListItems = items;
         setDropDownList(mListItems);
+        if (mListItems != null && mFirstItemSelected && mListItems.size() >= 1) {
+            setSelectedIndex(0);
+        }
     }
 
     private void setSelectedItem(T item) {
         mSelectedItem = item;
-        setText(mWhatToPrint.getPrintable(item));
+        if (mSelectedItem != null) {
+            final String text = (mWhatToPrint != null) ? mWhatToPrint.getPrintable(item) : item.toString();
+            setText(text);
+        }
     }
 
     private void setSelectedIndex(int index) {
         mSelectedIndex = index;
-        mSelectedItem = adapter.getItem(mSelectedIndex);
+        setSelectedItem(adapter.getItem(mSelectedIndex));
     }
 
     @Override
@@ -352,4 +378,12 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Rect r = mRect;
+        Paint paint = mPaint;
+        final int height = canvas.getHeight() - getHeight() / 6;
+        canvas.drawLine(0, height, getWidth(), height, paint);
+    }
 }

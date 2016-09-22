@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DropDownAttrs">
+        <attr name="hintText" format="string"/>
+        <attr name="hintTextSize" format="integer"/>
+        <attr name="itemTextSize" format="integer"/>
+        <attr name="firstItemSelected" format="boolean"/>
+
+    </declare-styleable>
+</resources>
