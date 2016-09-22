@@ -39,7 +39,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private static final String KEY_SAVED_STATE = "state";
     private List<T> mListItems = new ArrayList<>();
     private T mSelectedItem;
-    private PopupWindow popupWindow;
+    private PopupWindow mPopupWindow;
     private ListView mListView;
     private int mPopupHeight = 500;
     private int backgroundColor = Color.WHITE;
@@ -100,16 +100,9 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 e.printStackTrace();
             }
         }
-
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(2);
-        mPaint.setAlpha(200);
-        mPaint.setColor(mLineColor);// line color
-
+        setLinePaint();
         setText(mHintText);
         setStyle(attrs);
-        computePopupHeight();
         arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
         setCompoundDrawables(null, null, arrowDrawable, null);
         setKeyListener(null);
@@ -129,18 +122,31 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         setupPopupWindow();
     }
 
+    /**
+     * Paint for bottom line
+     */
+    private void setLinePaint() {
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(2);
+        mPaint.setAlpha(200);
+        mPaint.setColor(mLineColor);// line color
+    }
+
     private void setupPopupWindow() {
-        popupWindow = new PopupWindow(getContext());
-        popupWindow.setContentView(mDropdownContainer);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setFocusable(true);
+        mPopupWindow = new PopupWindow(getContext());
+        mPopupWindow.setContentView(mDropdownContainer);
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.setFocusable(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.setElevation(16);
+            mPopupWindow.setElevation(16);
         }
-        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
+        mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
         if (backgroundColor != Color.WHITE) { // default color is white
             setBackgroundColor(backgroundColor);
         }
+
+
     }
 
     private void setupListView() {
@@ -219,7 +225,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
     private void collapse() {
-        popupWindow.dismiss();
+        mPopupWindow.dismiss();
     }
 
     public void setItems(List<T> items) {
@@ -266,9 +272,9 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
             final int[] location = new int[2];
             getLocationInWindow(location);
             int hintTextHeight = mDropdownHeader.getMeasuredHeight();
-            popupWindow.setHeight(mPopupHeight + hintTextHeight);
-            popupWindow.setWidth(this.getWidth());
-            popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, location[0], location[1]);
+            mPopupWindow.setHeight(mPopupHeight + hintTextHeight);
+            mPopupWindow.setWidth(this.getWidth());
+            mPopupWindow.showAtLocation(this, Gravity.NO_GRAVITY, location[0], location[1]);
         }
     }
 
@@ -339,8 +345,8 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         Bundle bundle = new Bundle();
         bundle.putParcelable(KEY_SAVED_STATE, super.onSaveInstanceState());
         bundle.putInt(KEY_SELECTED_INDEX, mSelectedIndex);
-        if (popupWindow != null) {
-            bundle.putBoolean(KEY_IS_POPUP_SHOWING, popupWindow.isShowing());
+        if (mPopupWindow != null) {
+            bundle.putBoolean(KEY_IS_POPUP_SHOWING, mPopupWindow.isShowing());
             collapse();
         } else {
             bundle.putBoolean(KEY_IS_POPUP_SHOWING, false);
@@ -357,7 +363,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 setSelectedItem(adapter.getItem(mSelectedIndex));
             }
             if (bundle.getBoolean(KEY_IS_POPUP_SHOWING)) {
-                if (popupWindow != null) {
+                if (mPopupWindow != null) {
                     // Post the show request into the looper to avoid bad token exception
                     post(new Runnable() {
 
