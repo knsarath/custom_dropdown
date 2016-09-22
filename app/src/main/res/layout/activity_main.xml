@@ -27,6 +27,7 @@
                 spinner:firstItemSelected="true"
                 spinner:hintText="Select a string"
                 spinner:bottomLineColor="@color/colorAccent"
+                spinner:backgroundColor="@android:color/transparent"
             />
             <Button
 

@@ -6,6 +6,7 @@
         <attr name="itemTextSize" format="integer"/>
         <attr name="firstItemSelected" format="boolean"/>
         <attr name="bottomLineColor" format="color"/>
-
+        <attr name="backgroundColor" format="color"/>
     </declare-styleable>
+
 </resources>

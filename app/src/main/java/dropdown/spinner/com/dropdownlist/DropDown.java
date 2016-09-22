@@ -94,6 +94,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 mHintText = (hint == null) ? mHintText : hint;
                 mFirstItemSelected = styledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
                 mLineColor = styledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
+                backgroundColor = styledAttrs.getColor(R.styleable.DropDownAttrs_backgroundColor, Color.WHITE);
                 styledAttrs.recycle();
             } catch (Exception e) {
                 e.printStackTrace();
