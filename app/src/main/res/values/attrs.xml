@@ -5,6 +5,7 @@
         <attr name="hintTextSize" format="integer"/>
         <attr name="itemTextSize" format="integer"/>
         <attr name="firstItemSelected" format="boolean"/>
+        <attr name="bottomLineColor" format="color"/>
 
     </declare-styleable>
 </resources>

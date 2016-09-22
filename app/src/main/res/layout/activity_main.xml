@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 spinner:firstItemSelected="true"
                 spinner:hintText="Select a string"
+                spinner:bottomLineColor="@color/colorAccent"
             />
             <Button
 

@@ -56,6 +56,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private boolean mFirstItemSelected = false;
     private Rect mRect;
     private Paint mPaint;
+    private int mLineColor = 0xFF848484;
 
 
     public interface ItemClickListener<T> {
@@ -88,28 +89,25 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
     private void init(AttributeSet attrs) {
-
-        mRect = new Rect();
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(2);
-        mPaint.setAlpha(200);
-        mPaint.setColor(0xFF848484);// line color
-
-
         if (attrs != null) {
             try {
                 TypedArray styledAttrs = getContext().obtainStyledAttributes(attrs, R.styleable.DropDownAttrs);
                 final String hint = styledAttrs.getString(R.styleable.DropDownAttrs_hintText);
                 mHintText = (hint == null) ? mHintText : hint;
                 mFirstItemSelected = styledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
-
-
+                mLineColor = styledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
                 styledAttrs.recycle();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        mRect = new Rect();
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(2);
+        mPaint.setAlpha(200);
+        mPaint.setColor(mLineColor);// line color
 
         setText(mHintText);
         setStyle(attrs);
