@@ -7,6 +7,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableRight="@drawable/ms__arrow"/>
+        android:drawableRight="@drawable/arrow"/>
 
 </LinearLayout>

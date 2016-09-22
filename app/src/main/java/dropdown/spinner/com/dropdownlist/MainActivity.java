@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> getItems() {
         List<String> list = new ArrayList<>();
         list.add("One");
-        list.add("Two");
+      /*  list.add("Two");
         list.add("One");
         list.add("Two");
         list.add("One");
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         list.add("One");
         list.add("Two");
         list.add("One");
-        list.add("Two");
+        list.add("Two");*/
 
 
         return list;
