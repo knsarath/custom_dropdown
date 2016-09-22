@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,7 +53,6 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private ArrayAdapter<T> adapter;
     private Printable<T> mWhatToPrint = null;
     private boolean mFirstItemSelected = false;
-    private Rect mRect;
     private Paint mPaint;
     private int mLineColor = 0xFF848484;
 
@@ -102,7 +100,6 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
             }
         }
 
-        mRect = new Rect();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(2);
@@ -379,9 +376,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Rect r = mRect;
-        Paint paint = mPaint;
         final int height = canvas.getHeight() - getHeight() / 6;
-        canvas.drawLine(0, height, getWidth(), height, paint);
+        canvas.drawLine(0, height, getWidth(), height, mPaint);
     }
 }
