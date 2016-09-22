@@ -145,7 +145,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         if (backgroundColor != Color.WHITE) { // default color is white
             setBackgroundColor(backgroundColor);
         }
-
+        mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
 
     }
 
