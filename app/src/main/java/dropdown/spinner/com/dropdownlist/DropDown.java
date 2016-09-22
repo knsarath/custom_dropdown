@@ -123,6 +123,8 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         popupWindow.setContentView(mDropdownContainer);
         popupWindow.setOutsideTouchable(true);
         popupWindow.setFocusable(true);
+        popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             popupWindow.setElevation(16);
             popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
@@ -173,7 +175,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private void setStyle(AttributeSet attrs) {
         int[] attrsArray = new int[]{android.R.attr.textAppearanceListItemSmall,
                 android.R.attr.listPreferredItemHeightSmall,
-                android.R.attr.listPreferredItemPaddingLeft};
+                android.R.attr.listPreferredItemPaddingStart};
         TypedArray ta = getContext().obtainStyledAttributes(attrs, attrsArray);
         int textAppearanceIndex = 0;
         int minHeightIndex = 1;
