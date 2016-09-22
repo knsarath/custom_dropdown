@@ -46,7 +46,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private LinearLayout mDropdownContainer;
     private TextView mDropdownHeader;
     private String mHintText = "Select an item";
-    private boolean mHideArrow = false;
+    private boolean mShowArrow = true;
     private int mArrowColor = Color.BLACK;
     private Drawable arrowDrawable;
     private int mSelectedIndex = -1;
@@ -95,6 +95,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 mFirstItemSelected = styledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
                 mLineColor = styledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
                 backgroundColor = styledAttrs.getColor(R.styleable.DropDownAttrs_backgroundColor, Color.WHITE);
+                mShowArrow = styledAttrs.getBoolean(R.styleable.DropDownAttrs_showArrow, true);
                 styledAttrs.recycle();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -111,7 +112,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         mDropdownContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
         setDropDownHeader();
-        if (!mHideArrow) {
+        if (mShowArrow) {
             arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
             arrowDrawable.setColorFilter(mArrowColor, PorterDuff.Mode.SRC_IN);
             setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
@@ -170,7 +171,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     private void setDropDownHeader() {
         mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item_1, null);
-        if (!mHideArrow) {
+        if (mShowArrow) {
             ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
             animator.start();
             mDropdownHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);

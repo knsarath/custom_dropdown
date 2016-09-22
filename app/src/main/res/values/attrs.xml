@@ -7,6 +7,7 @@
         <attr name="firstItemSelected" format="boolean"/>
         <attr name="bottomLineColor" format="color"/>
         <attr name="backgroundColor" format="color"/>
+        <attr name="showArrow" format="boolean"/>
     </declare-styleable>
 
 </resources>
