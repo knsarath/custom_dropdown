@@ -1,10 +1,14 @@
 package dropdown.spinner.com.dropdownlist;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -28,6 +32,9 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private static final String TAG = DropDown.class.getSimpleName();
     private static final int HEIGHT = 0;
     private static final int WIDTH = 1;
+    private static final String KEY_SELECTED_INDEX = "selected_index";
+    private static final String KEY_IS_POPUP_SHOWING = "is_popup_showing";
+    private static final String KEY_SAVED_STATE = "state";
     private List<T> mListItems = new ArrayList<>();
     private T mSelectedItem;
     private PopupWindow popupWindow;
@@ -35,14 +42,22 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private int mPopupHeight = 500;
     private int backgroundColor = Color.WHITE;
     private LinearLayout mDropdownContainer;
-    private TextView mDropdowHeader;
-    private static final int sPaddingLeft = 8;
-    private static final int sPaddingRight = 8;
+    private TextView mDropdownHeader;
     private String mHintText = "Select an item";
+    private boolean mHideArrow = false;
+    private int mArrowColor = Color.BLACK;
+    private Drawable arrowDrawable;
+    private int mSelectedIndex = -1;
+    private ArrayAdapter<T> adapter;
+    private Printable<T> mWhatToPrint;
 
 
     public interface ItemClickListener<T> {
         void onItemSelected(DropDown dropDown, T selectedItem);
+    }
+
+    public interface Printable<T> {
+        String getPrintable(T t);
     }
 
     private ItemClickListener<T> mItemClickListener;
@@ -62,60 +77,36 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         mItemClickListener = itemClickListener;
     }
 
+    public void setWhatToPrint(Printable<T> whatToPrint) {
+        mWhatToPrint = whatToPrint;
+    }
+
     private void init(AttributeSet attrs) {
-        int[] attrsArray = new int[]{android.R.attr.textAppearanceListItemSmall,
-                android.R.attr.listPreferredItemHeightSmall,
-                android.R.attr.listPreferredItemPaddingLeft};
-        TypedArray ta = getContext().obtainStyledAttributes(attrs, attrsArray);
-        int textAppearanceIndex = 0;
-        int minHeightIndex = 1;
-        int paddingIndex = 2;
-        int textAppearance = ta.getResourceId(textAppearanceIndex, -1);
-        setGravity(Gravity.CENTER_VERTICAL);
-        setMinHeight(ta.getDimensionPixelSize(minHeightIndex, -1));
-        final int padding = ta.getDimensionPixelSize(paddingIndex, -1);
-        setPadding(padding, 0, 0, 0);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setTextAppearance(textAppearance);
-        } else {
-            setTextAppearance(getContext(), textAppearance);
-        }
-
-
-        ta.recycle();
-        int screenHeight = getScreenDimension(HEIGHT);
-        mPopupHeight = screenHeight / 3;
         setText(mHintText);
+        setStyle(attrs);
+        computePopupHeight();
 
-        Drawable arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow);
-
-
-        arrowDrawable.setBounds(0, 0, 80, 80);
+        arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
         setCompoundDrawables(null, null, arrowDrawable, null);
         setKeyListener(null);
         setOnClickListener(this);
-        mDropdownContainer = new LinearLayout(getContext());
-        mDropdownContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
-        mDropdowHeader = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item_1, null);
+        setDropDownHeader();
+
+        if (!mHideArrow) {
+            arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
+            arrowDrawable.setColorFilter(mArrowColor, PorterDuff.Mode.SRC_IN);
+            setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
+        }
 
 
-       /*TypedArray ta = getContext().obtainStyledAttributes(attrs, attrsArray);
-        int padding = ta.getDimensionPixelSize(0, 8);
-        ta.recycle();
-
-        mDropdowHeader.setPadding(padding, padding, 24, padding);*/
-
-        mDropdowHeader.setCompoundDrawables(null, null, arrowDrawable, null);
         mListView = new ListView(getContext());
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 T selectedItem = mListItems.get(position);
                 setText(selectedItem.toString());
-                mSelectedItem = selectedItem;
+                setSelectedIndex(position);
+                setSelectedItem(selectedItem);
                 if (mItemClickListener != null) {
                     mItemClickListener.onItemSelected(DropDown.this, selectedItem);
                 }
@@ -123,19 +114,10 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
             }
         });
 
-        mDropdowHeader.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                collapse();
-            }
-        });
-        mDropdowHeader.setText(mHintText);
-        mDropdowHeader.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mListView.setLayoutParams(params);
-        mDropdownContainer.addView(mDropdowHeader);
+        mDropdownContainer.addView(mDropdownHeader);
         mDropdownContainer.addView(mListView);
         popupWindow = new PopupWindow(getContext());
         popupWindow.setContentView(mDropdownContainer);
@@ -154,6 +136,61 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     }
 
+    private void setDropDownHeader() {
+        mDropdownContainer = new LinearLayout(getContext());
+        mDropdownContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
+        mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item_1, null);
+        if (!mHideArrow) {
+            ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
+            animator.start();
+            mDropdownHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
+        }
+        mDropdownHeader.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                collapse();
+            }
+        });
+        mDropdownHeader.setText(mHintText);
+        mDropdownHeader.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    }
+
+    private void computePopupHeight() {
+        int screenHeight = getScreenDimension(HEIGHT);
+        mPopupHeight = screenHeight / 3;
+
+    }
+
+    private void animateArrow(boolean shouldRotateUp) {
+        int start = shouldRotateUp ? 10000 : 0;
+        int end = shouldRotateUp ? 0 : 10000;
+        ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", start, end);
+        animator.start();
+    }
+
+    private void setStyle(AttributeSet attrs) {
+        int[] attrsArray = new int[]{android.R.attr.textAppearanceListItemSmall,
+                android.R.attr.listPreferredItemHeightSmall,
+                android.R.attr.listPreferredItemPaddingLeft};
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, attrsArray);
+        int textAppearanceIndex = 0;
+        int minHeightIndex = 1;
+        int paddingIndex = 2;
+        int textAppearance = ta.getResourceId(textAppearanceIndex, -1);
+        setGravity(Gravity.CENTER_VERTICAL);
+        setMinHeight(ta.getDimensionPixelSize(minHeightIndex, -1));
+        final int padding = ta.getDimensionPixelSize(paddingIndex, -1);
+        setPadding(padding, 0, 0, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setTextAppearance(textAppearance);
+        } else {
+            setTextAppearance(getContext(), textAppearance);
+        }
+        ta.recycle();
+    }
+
     private int getScreenDimension(int what) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
@@ -164,6 +201,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private void collapse() {
         popupWindow.dismiss();
 
+
     }
 
     public void setItems(List<T> items) {
@@ -171,9 +209,23 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         setDropDownList(mListItems);
     }
 
+    private void setSelectedItem(T item) {
+        mSelectedItem = item;
+        setText(mWhatToPrint.getPrintable(item));
+    }
+
+    private void setSelectedIndex(int index) {
+        mSelectedIndex = index;
+        mSelectedItem = adapter.getItem(mSelectedIndex);
+    }
+
     @Override
     public void onClick(View view) {
-        if (mListView.getAdapter().getCount() > 0) {
+        expand();
+    }
+
+    private void expand() {
+        if (mListView.getAdapter() != null && mListView.getAdapter().getCount() > 0) {
             final int count = mListView.getAdapter().getCount();
             View itemview = mListView.getAdapter().getView(0, null, mListView);
             int totalHeight = 0;
@@ -186,20 +238,27 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
             if (mPopupHeight > totalHeight) {
                 mPopupHeight = totalHeight;
             }
-            mDropdowHeader.setText(mHintText);
+            mDropdownHeader.setText(mHintText);
             final int[] location = new int[2];
             getLocationInWindow(location);
-
-            int hintTextHeight = mDropdowHeader.getMeasuredHeight();
+            int hintTextHeight = mDropdownHeader.getMeasuredHeight();
             popupWindow.setHeight(mPopupHeight + hintTextHeight);
             popupWindow.setWidth(this.getWidth());
             popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, location[0], location[1]);
         }
-
     }
 
+    /**
+     * returns the selected item , returns null if nothing selected
+     *
+     * @return
+     */
     public T getSelectedItem() {
         return mSelectedItem;
+    }
+
+    public int getSelectedIndex() {
+        return mSelectedIndex;
     }
 
     @Override
@@ -208,9 +267,87 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
     private void setDropDownList(List<T> list) {
-        ArrayAdapter<T> adapter = new ArrayAdapter<T>(getContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, list);
+        adapter = new CustomSpinnerAdapter(getContext(), mListItems);
         mListView.setAdapter(adapter);
 
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        computePopupHeight();
+    }
+
+
+    /**
+     * List view adapter
+     */
+    public class CustomSpinnerAdapter extends ArrayAdapter<T> {
+        private class ViewHolder {
+            private TextView itemView;
+        }
+
+        public CustomSpinnerAdapter(Context context, List<T> items) {
+            super(context, -1, items);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(this.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+                viewHolder = new ViewHolder();
+                viewHolder.itemView = (TextView) convertView.findViewById(android.R.id.text1);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            T item = getItem(position);
+            if (item != null) {
+                final String text = (mWhatToPrint == null) ? item.toString() : mWhatToPrint.getPrintable(item);
+                viewHolder.itemView.setText(text);
+            }
+            return convertView;
+        }
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_SAVED_STATE, super.onSaveInstanceState());
+        bundle.putInt(KEY_SELECTED_INDEX, mSelectedIndex);
+        if (popupWindow != null) {
+            bundle.putBoolean(KEY_IS_POPUP_SHOWING, popupWindow.isShowing());
+            collapse();
+        } else {
+            bundle.putBoolean(KEY_IS_POPUP_SHOWING, false);
+        }
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable savedState) {
+        if (savedState instanceof Bundle) {
+            Bundle bundle = (Bundle) savedState;
+            mSelectedIndex = bundle.getInt(KEY_SELECTED_INDEX);
+            if (adapter != null) {
+                setSelectedItem(adapter.getItem(mSelectedIndex));
+            }
+            if (bundle.getBoolean(KEY_IS_POPUP_SHOWING)) {
+                if (popupWindow != null) {
+                    // Post the show request into the looper to avoid bad token exception
+                    post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            expand();
+                        }
+                    });
+                }
+            }
+            savedState = bundle.getParcelable(KEY_SAVED_STATE);
+        }
+        super.onRestoreInstanceState(savedState);
+    }
+
+
 }
