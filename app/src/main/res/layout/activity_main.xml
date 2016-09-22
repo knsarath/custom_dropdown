@@ -19,7 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <include layout="@layout/buttons"/>
+
             <dropdown.spinner.com.dropdownlist.DropDown
                 android:id="@+id/string_list"
                 android:layout_width="match_parent"
@@ -30,98 +32,15 @@
                 spinner:backgroundColor="@android:color/transparent"
                 spinner:showArrow="false"
             />
-            <Button
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
+            <include layout="@layout/btns_1"/>
 
             <dropdown.spinner.com.dropdownlist.DropDown
                 android:id="@+id/drop_down"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <Button
-                android:id="@+id/show"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SHOW SELECTED ITEM"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
-            <Button
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Click"/>
+            <include layout="@layout/btn_3"/>
 
         </LinearLayout>
 
