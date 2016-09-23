@@ -101,7 +101,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 e.printStackTrace();
             }
         }
-        setLinePaint();
+        initBottomLinePaint();
         setText(mHintText);
         setStyle(attrs);
         arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
@@ -126,7 +126,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     /**
      * Paint for bottom line
      */
-    private void setLinePaint() {
+    private void initBottomLinePaint() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(2);
