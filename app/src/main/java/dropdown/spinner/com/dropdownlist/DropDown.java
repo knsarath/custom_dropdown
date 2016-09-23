@@ -37,12 +37,13 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private static final String KEY_SELECTED_INDEX = "selected_index";
     private static final String KEY_IS_POPUP_SHOWING = "is_popup_showing";
     private static final String KEY_SAVED_STATE = "state";
+    private static final int HINT_TEXT_INDEX = -1;
     private List<T> mListItems = new ArrayList<>();
     private T mSelectedItem;
     private PopupWindow mPopupWindow;
     private ListView mListView;
     private int mPopupHeight = 500;
-    private int backgroundColor = Color.WHITE;
+    private int mBackgroundColor = Color.WHITE;
     private LinearLayout mDropdownContainer;
     private TextView mDropdownHeader;
     private String mHintText = "Select an item";
@@ -55,10 +56,14 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private boolean mFirstItemSelected = false;
     private Paint mPaint;
     private int mLineColor = 0xFF848484;
+    private int mHintTextColor = 0x70000000;
+    private int mTextColor = Color.BLACK;
 
 
     public interface ItemClickListener<T> {
         void onItemSelected(DropDown dropDown, T selectedItem);
+
+        void onNothingSelected();
     }
 
     public interface Printable<T> {
@@ -89,21 +94,26 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             try {
-                TypedArray styledAttrs = getContext().obtainStyledAttributes(attrs, R.styleable.DropDownAttrs);
-                final String hint = styledAttrs.getString(R.styleable.DropDownAttrs_hintText);
+                int[] defaultAttrSet = {
+                        android.R.attr.hint
+                };
+                TypedArray customStyledAttrs = getContext().obtainStyledAttributes(attrs, R.styleable.DropDownAttrs);
+                TypedArray defaultStyleAttrs = getContext().obtainStyledAttributes(attrs, defaultAttrSet);
+                final String hint = defaultStyleAttrs.getString(0);
                 mHintText = (hint == null) ? mHintText : hint;
-                mFirstItemSelected = styledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
-                mLineColor = styledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
-                backgroundColor = styledAttrs.getColor(R.styleable.DropDownAttrs_backgroundColor, Color.WHITE);
-                mShowArrow = styledAttrs.getBoolean(R.styleable.DropDownAttrs_showArrow, true);
-                styledAttrs.recycle();
+                mTextColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_textColor, mTextColor);
+                mHintTextColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_hintTextColor, mHintTextColor);
+                mFirstItemSelected = customStyledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
+                mLineColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
+                mShowArrow = customStyledAttrs.getBoolean(R.styleable.DropDownAttrs_showArrow, true);
+                customStyledAttrs.recycle();
+                defaultStyleAttrs.recycle();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         initBottomLinePaint();
-        setText(mHintText);
-        setStyle(attrs);
+        setStyle(attrs, this);
         arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
         setCompoundDrawables(null, null, arrowDrawable, null);
         setKeyListener(null);
@@ -119,9 +129,16 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         }
         setupListView();
         mDropdownContainer.addView(mDropdownHeader);
+        final View view = new View(getContext());
+        view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
+        view.setBackgroundColor(0x70000000);
+        view.setAlpha(0.3f);
+        mDropdownContainer.addView(view);
         mDropdownContainer.addView(mListView);
         setupPopupWindow();
+        setSelectedIndex(HINT_TEXT_INDEX);
     }
+
 
     /**
      * Paint for bottom line
@@ -143,8 +160,8 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
             mPopupWindow.setElevation(16);
         }
         mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
-        if (backgroundColor != Color.WHITE) { // default color is white
-            setBackgroundColor(backgroundColor);
+        if (mBackgroundColor != Color.WHITE) { // default color is white
+            setBackgroundColor(mBackgroundColor);
         }
         mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
 
@@ -171,20 +188,26 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     private void setDropDownHeader() {
         mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, null);
+        setStyle(null, mDropdownHeader);
+        mDropdownHeader.setTextColor(mHintTextColor);
         if (mShowArrow) {
             ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
             animator.start();
             mDropdownHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
         }
-        mDropdownHeader.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                collapse();
-            }
-        });
         mDropdownHeader.setText(mHintText);
         mDropdownHeader.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        mDropdownHeader.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onNothingSelected();
+                }
+                setSelectedIndex(HINT_TEXT_INDEX);
+                collapse();
+            }
+        });
     }
 
     private void computePopupHeight() {
@@ -193,23 +216,23 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     }
 
-    private void setStyle(AttributeSet attrs) {
+    private void setStyle(AttributeSet attrs, TextView textView) {
         int[] attrsArray = new int[]{android.R.attr.textAppearanceListItemSmall,
                 android.R.attr.listPreferredItemHeightSmall,
                 android.R.attr.listPreferredItemPaddingStart};
         TypedArray ta = getContext().obtainStyledAttributes(attrs, attrsArray);
         int textAppearanceIndex = 0;
         int minHeightIndex = 1;
-        int paddingIndex = 2;
+        int paddingLeftIndex = 2;
         int textAppearance = ta.getResourceId(textAppearanceIndex, -1);
-        setGravity(Gravity.CENTER_VERTICAL);
-        setMinHeight(ta.getDimensionPixelSize(minHeightIndex, -1));
-        final int padding = ta.getDimensionPixelSize(paddingIndex, -1);
-        setPadding(padding, 0, 0, 0);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setMinHeight(ta.getDimensionPixelSize(minHeightIndex, 0));
+        final int paddingStart = ta.getDimensionPixelSize(paddingLeftIndex, 0);
+        textView.setPadding(paddingStart, 0, 0, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setTextAppearance(textAppearance);
+            textView.setTextAppearance(textAppearance);
         } else {
-            setTextAppearance(getContext(), textAppearance);
+            textView.setTextAppearance(getContext(), textAppearance);
         }
         ta.recycle();
     }
@@ -239,15 +262,20 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
 
     private void setSelectedItem(T item) {
         mSelectedItem = item;
-        if (mSelectedItem != null) {
-            final String text = (mWhatToPrint != null) ? mWhatToPrint.getPrintable(item) : item.toString();
+        mSelectedIndex = (item != null && mListItems.contains(item)) ? mListItems.indexOf(item) : HINT_TEXT_INDEX;
+        setTextColor((mSelectedIndex == HINT_TEXT_INDEX) ? mHintTextColor : mTextColor);
+        if (mSelectedIndex == HINT_TEXT_INDEX) {
+            setText(mHintText);
+        } else if (mSelectedItem != null) {
+            final String text = (mWhatToPrint != null) ? mWhatToPrint.getPrintable(mSelectedItem) : mSelectedItem.toString();
             setText(text);
         }
     }
 
     private void setSelectedIndex(int index) {
         mSelectedIndex = index;
-        setSelectedItem(adapter.getItem(mSelectedIndex));
+        final T item = (index != HINT_TEXT_INDEX) ? adapter.getItem(mSelectedIndex) : null;
+        setSelectedItem(item);
     }
 
     @Override
@@ -328,6 +356,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 convertView = LayoutInflater.from(this.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.itemView = (TextView) convertView.findViewById(android.R.id.text1);
+                viewHolder.itemView.setTextColor(mTextColor);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -359,7 +388,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     public void onRestoreInstanceState(Parcelable savedState) {
         if (savedState instanceof Bundle) {
             Bundle bundle = (Bundle) savedState;
-            mSelectedIndex = bundle.getInt(KEY_SELECTED_INDEX);
+            setSelectedIndex(bundle.getInt(KEY_SELECTED_INDEX));
             if (adapter != null) {
                 setSelectedItem(adapter.getItem(mSelectedIndex));
             }

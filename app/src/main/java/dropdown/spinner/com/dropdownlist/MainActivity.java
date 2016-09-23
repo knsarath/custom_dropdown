@@ -30,7 +30,12 @@ public class MainActivity extends AppCompatActivity {
         dropDown.setItemClickListener(new DropDown.ItemClickListener<Bank>() {
             @Override
             public void onItemSelected(DropDown dropDown, Bank selectedItem) {
+                Toast.makeText(getApplicationContext(), "Selected item :" + selectedItem, Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onNothingSelected() {
+                Toast.makeText(getApplicationContext(), "Nothing Selected", Toast.LENGTH_SHORT).show();
             }
         });
 

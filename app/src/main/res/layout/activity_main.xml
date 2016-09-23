@@ -22,25 +22,30 @@
 
             <include layout="@layout/buttons"/>
 
-            <dropdown.spinner.com.dropdownlist.DropDown
-                android:id="@+id/string_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                spinner:firstItemSelected="true"
-                spinner:hintText="Select a string"
-                spinner:bottomLineColor="@color/colorAccent"
-                spinner:backgroundColor="@android:color/transparent"
-                spinner:showArrow="false"
-            />
-
-            <include layout="@layout/btns_1"/>
 
             <dropdown.spinner.com.dropdownlist.DropDown
                 android:id="@+id/drop_down"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Select a bank"/>
 
             <include layout="@layout/btn_3"/>
+
+            <dropdown.spinner.com.dropdownlist.DropDown
+                android:id="@+id/string_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select a string"
+                android:textColor="#1141de"
+                spinner:backgroundColor="@android:color/transparent"
+                spinner:bottomLineColor="@color/colorAccent"
+                spinner:firstItemSelected="false"
+                spinner:hintTextColor="@color/ash"
+                spinner:showArrow="false"
+                spinner:textColor="@color/black"
+            />
+            <include layout="@layout/btns_1"/>
+
 
         </LinearLayout>
 
