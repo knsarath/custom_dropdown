@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="DropDownAttrs">
-        <attr name="hintText" format="string"/>
         <attr name="hintTextSize" format="integer"/>
         <attr name="itemTextSize" format="integer"/>
         <attr name="firstItemSelected" format="boolean"/>
         <attr name="bottomLineColor" format="color"/>
         <attr name="backgroundColor" format="color"/>
         <attr name="showArrow" format="boolean"/>
+        <attr name="textColor" format="color"/>
+        <attr name="hintTextColor" format="color"/>
     </declare-styleable>
 
 </resources>
