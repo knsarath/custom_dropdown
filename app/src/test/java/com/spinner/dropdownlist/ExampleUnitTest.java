@@ -1,4 +1,4 @@
-package dropdown.spinner.com.dropdownlist;
+package com.spinner.dropdownlist;
 
 import org.junit.Test;
 

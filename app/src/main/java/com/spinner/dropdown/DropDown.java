@@ -1,4 +1,7 @@
-package dropdown.spinner.com.dropdownlist;
+package com.spinner.dropdown;
+/**
+ * Created by sarath on 24/2/16.
+ */
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
