@@ -49,7 +49,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     private String mHintText = "Select an item";
     private boolean mShowArrow = true;
     private int mArrowColor = Color.BLACK;
-    private Drawable arrowDrawable;
+    private Drawable mArrowDrawable;
     private int mSelectedIndex = -1;
     private ArrayAdapter<T> adapter;
     private Printable<T> mWhatToPrint = null;
@@ -114,8 +114,8 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         }
         initBottomLinePaint();
         setStyle(attrs, this);
-        arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
-        setCompoundDrawables(null, null, arrowDrawable, null);
+        mArrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
+        setCompoundDrawables(null, null, mArrowDrawable, null);
         setKeyListener(null);
         setOnClickListener(this);
         mDropdownContainer = new LinearLayout(getContext());
@@ -123,9 +123,9 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         mDropdownContainer.setOrientation(LinearLayout.VERTICAL);
         setDropDownHeader();
         if (mShowArrow) {
-            arrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
-            arrowDrawable.setColorFilter(mArrowColor, PorterDuff.Mode.SRC_IN);
-            setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
+            mArrowDrawable = ContextCompat.getDrawable(getContext(), R.drawable.arrow).mutate();
+            mArrowDrawable.setColorFilter(mArrowColor, PorterDuff.Mode.SRC_IN);
+            setCompoundDrawablesWithIntrinsicBounds(null, null, mArrowDrawable, null);
         }
         setupListView();
         mDropdownContainer.addView(mDropdownHeader);
@@ -191,9 +191,9 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         setStyle(null, mDropdownHeader);
         mDropdownHeader.setTextColor(mHintTextColor);
         if (mShowArrow) {
-            ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
+            ObjectAnimator animator = ObjectAnimator.ofInt(mArrowDrawable, "level", 0, 10000);
             animator.start();
-            mDropdownHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
+            mDropdownHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, mArrowDrawable, null);
         }
         mDropdownHeader.setText(mHintText);
         mDropdownHeader.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
