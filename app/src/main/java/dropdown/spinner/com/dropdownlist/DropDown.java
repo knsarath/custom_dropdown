@@ -170,7 +170,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
     }
 
     private void setDropDownHeader() {
-        mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item_1, null);
+        mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, null);
         if (mShowArrow) {
             ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", 0, 10000);
             animator.start();
