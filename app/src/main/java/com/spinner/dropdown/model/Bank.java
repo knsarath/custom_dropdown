@@ -1,4 +1,4 @@
-package dropdown.spinner.com.dropdownlist.model;
+package com.spinner.dropdown.model;
 
 /**
  * Created by sarath on 24/2/16.

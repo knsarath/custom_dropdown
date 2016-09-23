@@ -1,14 +1,14 @@
-package dropdown.spinner.com.dropdownlist;
+package com.spinner.dropdown;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.spinner.dropdown.model.Bank;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import dropdown.spinner.com.dropdownlist.model.Bank;
 
 public class MainActivity extends AppCompatActivity {
 

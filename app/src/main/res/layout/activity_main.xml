@@ -11,7 +11,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="dropdown.spinner.com.dropdownlist.MainActivity">
+    tools:context="com.spinner.dropdownlist.com.spinner.dropdown.MainActivity">
 
     <ScrollView android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -23,7 +23,7 @@
             <include layout="@layout/buttons"/>
 
 
-            <dropdown.spinner.com.dropdownlist.DropDown
+            <com.spinner.dropdown.DropDown
                 android:id="@+id/drop_down"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
 
             <include layout="@layout/btn_3"/>
 
-            <dropdown.spinner.com.dropdownlist.DropDown
+            <com.spinner.dropdown.DropDown
                 android:id="@+id/string_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

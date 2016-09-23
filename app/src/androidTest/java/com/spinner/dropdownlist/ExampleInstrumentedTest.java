@@ -1,4 +1,4 @@
-package dropdown.spinner.com.dropdownlist;
+package com.spinner.dropdownlist;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("dropdown.spinner.com.dropdownlist", appContext.getPackageName());
+        assertEquals("spinner.com.dropdownlist", appContext.getPackageName());
     }
 }
