@@ -2,6 +2,8 @@ package dropdown.spinner.com.dropdownlist;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.show).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final int selectedIndex = dropDown.getSelectedIndex();
+                final Bank selectedItem = dropDown.getSelectedItem();
+                Toast.makeText(getApplicationContext(), "Selected item :" + selectedItem + " ,  index :" + selectedIndex, Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
 
@@ -40,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         list.add("One");
         list.add("Two");
         list.add("Three");
-
 
 
         return list;
