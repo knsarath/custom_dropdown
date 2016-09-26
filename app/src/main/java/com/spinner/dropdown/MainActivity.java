@@ -17,17 +17,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final DropDown<Bank> dropDown = (DropDown) findViewById(R.id.drop_down);
+        final DropDown<Bank> bankDropDown = (DropDown) findViewById(R.id.drop_down);
         final DropDown<String> stringDropDown = (DropDown) findViewById(R.id.string_list);
         stringDropDown.setItems(getItems());
-        dropDown.setItems(getBanks());
-        dropDown.setWhatToPrint(new DropDown.Printable<Bank>() {
+        bankDropDown.setItems(getBanks());
+        bankDropDown.setWhatToPrint(new DropDown.Printable<Bank>() {
             @Override
             public String getPrintable(Bank bank) {
                 return bank.getName();
             }
         });
-        dropDown.setItemClickListener(new DropDown.ItemClickListener<Bank>() {
+        bankDropDown.setItemClickListener(new DropDown.ItemClickListener<Bank>() {
             @Override
             public void onItemSelected(DropDown dropDown, Bank selectedItem) {
                 Toast.makeText(getApplicationContext(), "Selected item :" + selectedItem, Toast.LENGTH_SHORT).show();
@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.show).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final int selectedIndex = dropDown.getSelectedIndex();
-                final Bank selectedItem = dropDown.getSelectedItem();
+                final int selectedIndex = bankDropDown.getSelectedIndex();
+                final Bank selectedItem = bankDropDown.getSelectedItem();
                 Toast.makeText(getApplicationContext(), "Selected item :" + selectedItem + " ,  index :" + selectedIndex, Toast.LENGTH_SHORT).show();
             }
         });
