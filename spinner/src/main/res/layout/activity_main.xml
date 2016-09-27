@@ -26,6 +26,7 @@
             <com.spinner.dropdown.DropDown
                 android:id="@+id/drop_down"
                 android:layout_width="match_parent"
+                android:textSize="14sp"
                 android:layout_height="wrap_content"
                 android:hint="Select a bank"/>
 
@@ -37,12 +38,13 @@
                 android:layout_height="wrap_content"
                 android:hint="Select a string"
                 android:textColor="#1141de"
-                spinner:backgroundColor="@android:color/transparent"
-                spinner:bottomLineColor="@color/colorAccent"
+                spinner:backgroundColor="@android:color/white"
+                spinner:bottomLineColor="@android:color/holo_red_dark"
                 spinner:firstItemSelected="false"
                 spinner:hintTextColor="@color/ash"
                 spinner:showArrow="false"
-                spinner:textColor="@color/black"
+                spinner:textColor="@android:color/black"
+
             />
             <include layout="@layout/btns_1"/>
 

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -108,6 +109,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
                 mHintTextColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_hintTextColor, mHintTextColor);
                 mFirstItemSelected = customStyledAttrs.getBoolean(R.styleable.DropDownAttrs_firstItemSelected, false);
                 mLineColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_bottomLineColor, mLineColor);
+                mBackgroundColor = customStyledAttrs.getColor(R.styleable.DropDownAttrs_backgroundColor, mBackgroundColor);
                 mShowArrow = customStyledAttrs.getBoolean(R.styleable.DropDownAttrs_showArrow, true);
                 customStyledAttrs.recycle();
                 defaultStyleAttrs.recycle();
@@ -164,7 +166,11 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         }
         mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.rounded_listview_background));
         if (mBackgroundColor != Color.WHITE) { // default color is white
-            setBackgroundColor(mBackgroundColor);
+            GradientDrawable gradientDrawable = (GradientDrawable) mPopupWindow.getBackground();
+            if (gradientDrawable != null) {
+                setBackgroundColor(mBackgroundColor);
+                gradientDrawable.setColor(mBackgroundColor);
+            }
         }
         mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
 
@@ -193,6 +199,7 @@ public class DropDown<T> extends TextView implements View.OnClickListener {
         mDropdownHeader = (TextView) LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, null);
         setStyle(null, mDropdownHeader);
         mDropdownHeader.setTextColor(mHintTextColor);
+        mDropdownHeader.setBackgroundColor(mBackgroundColor);
         if (mShowArrow) {
             ObjectAnimator animator = ObjectAnimator.ofInt(mArrowDrawable, "level", 0, 10000);
             animator.start();
